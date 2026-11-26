@@ -73,3 +73,12 @@ def test_no_real_addresses_in_the_repo():
                 if not m.group(0).startswith(allowed):
                     bad.append((str(p.relative_to(root)), m.group(0)))
     assert bad == []
+
+
+def test_repo_layout_nautobot_can_import():
+    """Nautobot's Git job loader walks packages from GIT_ROOT. Learned 2026-11-25 on the live lab:
+    without a root __init__.py the sync reports success and registers no jobs, with no error."""
+    root = Path(__file__).resolve().parents[1]
+    assert (root / "__init__.py").is_file(), "repo root must be a package"
+    assert (root / "jobs" / "__init__.py").is_file()
+    assert "register_jobs(" in (root / "jobs" / "__init__.py").read_text()

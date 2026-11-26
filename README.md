@@ -27,3 +27,10 @@ pytest -q        # 8 mutants must each produce a problem; a meta-check proves th
 Add a Git repository (Extensibility, Git Repositories): remote URL of this repo, branch `main`,
 provided contents `jobs`. No credentials are needed because the repo is public. After the sync, enable the
 job in the Jobs list (Git-sourced jobs start disabled) and run it.
+
+## Layout rule (learned the hard way)
+
+The repository root must contain an `__init__.py`, next to `jobs/`. Nautobot imports a Git repo as a
+package named after its slug and discovers it with `pkgutil.walk_packages`. Without the root
+`__init__.py` the sync **succeeds**, logs a warning that no jobs were registered, and the Job never appears.
+`tests/test_fabric_logic.py` fails if the file is missing.
